@@ -46,24 +46,9 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
             type=sha
-      - name: Combine tags and device tags
+      - name: Generate and Set Combined Tags
         run: |
-          # 读取环境变量
-          tags="${{ steps.docker-meta.outputs.tags }}"
-          device_tags="${{ matrix.configurations.device-tags }}"
-          # 将字符串转换为数组，根据\n分割
-          IFS=$'\n' read -r -a tags_array <<< "$tags"
-          IFS=$'\n' read -r -a device_tags_array <<< "$device_tags"
-          # 初始化变量
-          combined_output=""
-          # 遍历所有可能的组合并构建输出字符串
-          for tag in "${tags_array[@]}"; do
-            for device_tag in "${device_tags_array[@]}"; do
-              combined_output+="${tag}-${device_tag}\n"
-            done
-          done
-          # 将生成的字符串写入 GITHUB_ENV
-          echo "GITHUB_COMBINED_TAGS=$combined_output" >> $GITHUB_ENV
+          echo "GITHUB_COMBINED_TAGS=$(python paste_tags.py '${{ steps.meta.outputs.json }}' '${{ matrix.configurations.device-args }}')" >> $GITHUB_ENV
       - name: echo tags
         run:  echo ${{ env.GITHUB_COMBINED_TAGS }}
       - name: Login to Docker Hub
