@@ -49,7 +49,7 @@ jobs:
             type=sha
       - name: Generate and Set Combined Tags
         run: |
-          echo "GITHUB_COMBINED_TAGS=$(python paste_tags.py '${{ steps.docker-meta.outputs.json }}' '${{ matrix.configurations.device-tags }}')" >> $GITHUB_ENV
+          echo "GITHUB_COMBINED_TAGS=$(python paste_tags.py "${{ steps.docker-meta.outputs.json }}" "${{ matrix.configurations.device-tags }}")" >> $GITHUB_ENV
       - name: echo tags
         run:  echo ${{ env.GITHUB_COMBINED_TAGS }}
       - name: Login to Docker Hub
