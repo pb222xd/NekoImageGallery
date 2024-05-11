@@ -49,20 +49,30 @@ jobs:
       - name: Generate and Set Combined Tags
         run: |
           output=$(python - <<EOF
-          import json
-          json_data = '${{ steps.meta.outputs.json }}'
-          device_args = '${{ matrix.configurations.device-args }}'
-          metajson = json.loads(json_data)
-          tagsList = metajson.get('tags', [])
-          deviceTagsList = device_args.split('\\n')
-          combinedTags = []
-          for tag in tagsList:
-              for device in deviceTagsList:
-                  combinedTags.append(f"{tag}-{device}")
-          ','.join(combinedTags)
-          EOF
-          )
+      import json
+      
+      # 接收和处理 JSON 数据和设备参数
+      json_data = '${{ steps.meta.outputs.json }}'
+      device_args = '${{ matrix.configurations.device-args }}'
+      
+      # 解析 JSON
+      metajson = json.loads(json_data)
+      tagsList = metajson.get('tags', [])
+      deviceTagsList = device_args.split('\\n')
+      
+      # 创建组合标签列表
+      combinedTags = []
+      for tag in tagsList:
+          for device in deviceTagsList:
+              combinedTags.append(f"{tag}-{device}")
+      
+      # 输出组合标签为单行字符串，逗号分隔
+      print(','.join(combinedTags))
+      EOF
+      )
           echo "GITHUB_COMBINED_TAGS=$output" >> $GITHUB_ENV
+        shell: bash
+
       - name: echo tags
         run:  echo ${{ env.GITHUB_COMBINED_TAGS }}
       - name: Login to Docker Hub
