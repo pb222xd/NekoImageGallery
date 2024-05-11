@@ -48,7 +48,21 @@ jobs:
             type=sha
       - name: Generate and Set Combined Tags
         run: |
-          echo "GITHUB_COMBINED_TAGS=$(./.github/workflows/paste_tags.py '${{ steps.meta.outputs.json }}' '${{ matrix.configurations.device-args }}')" >> $GITHUB_ENV
+          output=$(python - <<EOF
+          import json
+          json_data = '${{ steps.meta.outputs.json }}'
+          device_args = '${{ matrix.configurations.device-args }}'
+          metajson = json.loads(json_data)
+          tagsList = metajson.get('tags', [])
+          deviceTagsList = device_args.split('\\n')
+          combinedTags = []
+          for tag in tagsList:
+              for device in deviceTagsList:
+                  combinedTags.append(f"{tag}-{device}")
+          ','.join(combinedTags)
+          EOF
+          )
+          echo "GITHUB_COMBINED_TAGS=$output" >> $GITHUB_ENV
       - name: echo tags
         run:  echo ${{ env.GITHUB_COMBINED_TAGS }}
       - name: Login to Docker Hub
