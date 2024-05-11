@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - 'master'
+    tags:
+      - '*'
   workflow_dispatch:
 
 jobs:
@@ -18,22 +20,26 @@ jobs:
       matrix:
         configurations:
           - dockerfile: "Dockerfile"
-            tags: |
-              edgeneko/neko-image-gallery:latest
-              edgeneko/neko-image-gallery:latest-cuda
-              edgeneko/neko-image-gallery:latest-cuda12.1
-            args: |
+            device-tags: |
+              cuda
+              cuda12.1
+            device-args: |
               CUDA_VERSION=12.1
           - dockerfile: "Dockerfile"
-            tags: edgeneko/neko-image-gallery:latest-cuda11.8
-            args: |
+            device-tags: cuda11.8
+            device-args: |
               CUDA_VERSION=11.8
           - dockerfile: "cpu-only.Dockerfile"
-            tags: edgeneko/neko-image-gallery:latest-cpu
-            args: ""
+            device-tags: cpu
+            device-args: ""
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+      - name: Docker meta
+        id: docker-meta
+        uses: docker/metadata-action@v5
+        with:
+          images: edgeneko/neko-image-gallery
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -44,5 +50,5 @@ jobs:
         with:
           file: ${{ matrix.configurations.dockerfile }}
           push: true
-          tags: ${{ matrix.configurations.tags }}
-          build-args: ${{ matrix.configurations.args }}
+          tags: ${{ steps.docker-meta.outputs.tags }}-${{ matrix.configurations.device-tags }}
+          build-args: ${{ matrix.configurations.device-args }}
