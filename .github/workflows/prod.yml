@@ -64,7 +64,8 @@ jobs:
           done
           # 将生成的字符串写入 GITHUB_ENV
           echo "GITHUB_COMBINED_TAGS=$combined_output" >> $GITHUB_ENV
-          echo $GITHUB_COMBINED_TAGS
+      - name: echo tags
+        run:  echo ${{ env.GITHUB_COMBINED_TAGS }}
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
