@@ -4,6 +4,8 @@ import json
 
 if __name__ == '__main__':
     if len(sys.argv) == 3:
+        print(sys.argv[1])
+        print(sys.argv[2])
         metajson = json.loads(sys.argv[1])
         tagsList = metajson.get('tags', [])
         deviceTagsList = sys.argv[2].split('\n')
