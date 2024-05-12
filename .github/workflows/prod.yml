@@ -19,16 +19,17 @@ jobs:
         configurations:
           - dockerfile: "Dockerfile"
             device-tags: |
-              cuda
-              cuda12.1
+              ""
+              "cuda"
+              "cuda12.1"
             device-args: |
               CUDA_VERSION=12.1
           - dockerfile: "Dockerfile"
-            device-tags: cuda11.8
+            device-tags: '"cuda11.8"'
             device-args: |
               CUDA_VERSION=11.8
           - dockerfile: "cpu-only.Dockerfile"
-            device-tags: cpu
+            device-tags: '"cpu"'
             device-args: ""
     steps:
       - uses: actions/checkout@v4
@@ -42,17 +43,22 @@ jobs:
           tags: |
             type=schedule
             type=ref,event=branch
-            type=ref,event=pr
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
             type=sha
       - name: Set Combined Tags
         run: |
-          json_base64=$(echo '${{ steps.docker-meta.outputs.json }}' | base64 -w 0)
-          device_tags_base64=$(echo '${{ matrix.configurations.device-tags }}' | base64 -w 0)
-          output=$(python .github/workflows/paste_tags.py "$json_base64" "$device_tags_base64")
-          echo "GITHUB_COMBINED_TAGS=$output" >> $GITHUB_ENV
+          $SUFFIXES=${{ matrix.configurations.device-tags }}
+          echo 'GITHUB_COMBINED_TAGS=<<EOF' >> $GITHUB_ENV
+          for SUFFIX in "${SUFFIXES[@]}"; do
+            echo '${{ steps.docker-meta.outputs.tags }}' | sed 's/$/'"$SUFFIX"'/' >> $GITHUB_ENV
+          done
+          echo EOF >> $GITHUB_ENV
+          # json_base64=$(echo '${{ steps.docker-meta.outputs.json }}' | base64 -w 0)
+          # device_tags_base64=$(echo '${{ matrix.configurations.device-tags }}' | base64 -w 0)
+          # output=$(python .github/workflows/paste_tags.py "$json_base64" "$device_tags_base64")
+          # echo "GITHUB_COMBINED_TAGS=$output" >> $GITHUB_ENV
       - name: echo tags
         run:  echo ${{ env.GITHUB_COMBINED_TAGS }}
       - name: Login to Docker Hub
