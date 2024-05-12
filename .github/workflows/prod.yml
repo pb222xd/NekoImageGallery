@@ -49,7 +49,7 @@ jobs:
             type=sha
       - name: Set Combined Tags
         run: |
-          $SUFFIXES=${{ matrix.configurations.device-tags }}
+          SUFFIXES=(${{ matrix.configurations.device-tags }})
           echo 'GITHUB_COMBINED_TAGS=<<EOF' >> $GITHUB_ENV
           for SUFFIX in "${SUFFIXES[@]}"; do
             echo '${{ steps.docker-meta.outputs.tags }}' | sed 's/$/'"$SUFFIX"'/' >> $GITHUB_ENV
