@@ -20,16 +20,16 @@ jobs:
           - dockerfile: "Dockerfile"
             device-tags: |
               ""
-              "cuda"
-              "cuda12.1"
+              "-cuda"
+              "-cuda12.1"
             device-args: |
               CUDA_VERSION=12.1
           - dockerfile: "Dockerfile"
-            device-tags: '"cuda11.8"'
+            device-tags: '"-cuda11.8"'
             device-args: |
               CUDA_VERSION=11.8
           - dockerfile: "cpu-only.Dockerfile"
-            device-tags: '"cpu"'
+            device-tags: '"-cpu"'
             device-args: ""
     steps:
       - uses: actions/checkout@v4
@@ -41,7 +41,6 @@ jobs:
         with:
           images: pk5ls21/fxxk-docker
           tags: |
-            type=schedule
             type=ref,event=branch
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
