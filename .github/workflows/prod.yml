@@ -66,3 +66,4 @@ jobs:
           push: true
           tags: ${{ env.GITHUB_COMBINED_TAGS }}
           build-args: ${{ matrix.configurations.device-args }}
+          labels: ${{ steps.docker-meta.outputs.labels }}
