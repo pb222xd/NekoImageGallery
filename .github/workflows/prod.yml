@@ -55,10 +55,6 @@ jobs:
             echo '${{ steps.docker-meta.outputs.tags }}' | sed 's/$/'"$SUFFIX"'/' >> $GITHUB_ENV
           done
           echo EOF >> $GITHUB_ENV
-          # json_base64=$(echo '${{ steps.docker-meta.outputs.json }}' | base64 -w 0)
-          # device_tags_base64=$(echo '${{ matrix.configurations.device-tags }}' | base64 -w 0)
-          # output=$(python .github/workflows/paste_tags.py "$json_base64" "$device_tags_base64")
-          # echo "GITHUB_COMBINED_TAGS=$output" >> $GITHUB_ENV
       - name: echo tags
         run:  echo ${{ env.GITHUB_COMBINED_TAGS }}
       - name: Login to Docker Hub
