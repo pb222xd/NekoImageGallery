@@ -41,7 +41,8 @@ jobs:
         with:
           images: pk5ls21/fxxk-docker
           tags: |
-            type=ref,event=branch
+            type=edge,branch=master
+            type=semver,pattern=v{{major}}.{{minor}}
             type=semver,pattern=v{{version}}
       - name: Set Combined Tags
         run: |
