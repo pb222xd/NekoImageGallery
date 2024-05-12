@@ -43,8 +43,6 @@ jobs:
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
       - name: Set Combined Tags
         run: |
           SUFFIXES=(${{ matrix.configurations.device-tags }})
