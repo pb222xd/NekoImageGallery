@@ -45,7 +45,6 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
-            type=sha
       - name: Set Combined Tags
         run: |
           SUFFIXES=(${{ matrix.configurations.device-tags }})
